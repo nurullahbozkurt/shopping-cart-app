@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useMemo } from "react";
 import { data } from "./data";
 export const BooksContext = createContext();
 
@@ -18,10 +18,17 @@ function ContextProvider(props) {
     localStorage.setItem("state", JSON.stringify(state.cart));
   }, [state]);
 
-  const totalPrice = state.cart.reduce(
-    (total, book) => (total = total + book.price * book.count),
-    0
-  );
+  const totalPrice = useMemo(() => {
+    if (!state?.cart) {
+      return 0;
+    }
+
+    return state.cart.reduce(
+      (total, book) => (total = total + book.price * book.count),
+      0
+    );
+  }, [state.cart]);
+
   const addToCart = (book) => {
     setState({
       ...state,
